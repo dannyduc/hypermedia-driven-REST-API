@@ -2,15 +2,7 @@ var express = require('express');
 var app = express();
 var Datastore = require('nedb');
 var db = {};
-var setupResponder = function(res) {
-    return function(err, results) {
-        if (err) {
-            res.send(JSON.stringify(err));
-        } else {
-            res.send(JSON.stringify(results));
-        }
-    };
-};
+var responder = require('./httpResponder');
 
 // Connect to an NeDB database
 db.movies = new Datastore({ filename: 'db/movies', autoload: true});
@@ -18,47 +10,45 @@ db.movies = new Datastore({ filename: 'db/movies', autoload: true});
 // Necessary for accessing POST data via rea.data object
 app.use(express.bodyParser());
 
+// catch-all route to set global values
+app.use(function (req, res, next) {
+    res.type('applicaiton/json');
+    res.locals.respond = responder.setup(res);
+    next();
+});
+
 // Routes
 app.get('/', function (req, res) {
     res.send("The API is working.");
-})
-    .post('/movies', function(req, res) {
-        var body = req.body;
-        var respond = setupResponder(res);
+});
 
-        res.set('Content-type', 'application/json');
+app.get('/movies', function (req, res) {
+    db.movies.find({}, res.locals.respond);
+});
 
-        switch (body.action) {
-            case "viewList":
-                db.movies.find({}, respond);
-                break;
-            case "addNew":
-                db.movies.insert({title: body.title}, respond);
-                break;
-            default:
-                respond({error:"No action given in request"});
-        }
-    })
-    .post('/movies/:id', function (req, res) {
-        var body = req.body;
-        var respond = setupResponder(res);
+app.post('/movies', function (req, res) {
+    db.movies.insert({title: req.body.title}, res.locals.respond);
+});
 
-        res.set('Content-type', 'application/json');
+app.get('/movies/:id', function (req, res) {
+    db.movies.findOne({_id: req.params.id}, res.locals.respond);
+});
 
-        switch (body.action) {
-            case "view":
-                db.movies.findOne({_id: req.params.id}, respond);
-                break;
-            case "rate":
-                db.movies.update({_id: req.params.id}, {
-                    $set: {rating: body.rating}
-                }, function (err, num) {
-                    respond(err, {success: num + " records updated"});
-                });
-                break;
-        }
-    })
-    .post('/rpc', function(req, res) {
+app.put('/movies/:id', function (req, res) {
+    db.movies.update({_id: req.params.id},
+            req.body,
+            function (err, num) {
+                res.locals.respond(err, {success: num + " records updated"});
+    });
+});
+
+app.delete('/movies/:id', function(req, res) {
+    db.movies.remove({_id:req.params.id}, function (err, num) {
+        res.locals.respond(err, {success: num + " record deleted"});
+    });
+});
+
+app.post('/rpc', function(req, res) {
 
         var body = req.body;
         var respond = function(err, results) {
