@@ -11,6 +11,7 @@ var app = fortune({
 app.resource('movie', {
     title: String,
     rating: Number,
+    genres: Array,
     director: 'director',
     cast: ['actor']
 });
@@ -35,3 +36,20 @@ app.resource('actor', {
 
 app.listen(4000);
 
+// patch
+// http://localhost:4000/movies/rhadQtIKoSWQrlNP
+//
+//    "movies": [{
+//        "id": "rhadQtIKoSWQrlNP",
+//        "title": "The Life Aquatic with Steve Zissou",
+//        "links": {
+//            "director": "33efSIDdpqCm1TIx",
+//            "cast": [
+//                "7CPUonUxXqwbVpZv",
+//                "7a1OTMCq5jzalXfE"
+//            ]
+//        }
+//    }]
+//
+//  [{"op":"replace", "path":"/movies/0/title", "value":"The Life Aquatic"}]
+//
