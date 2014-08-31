@@ -27,3 +27,10 @@ This will get you onto the 1-rpc branch. As you follow along through the course,
 	{"action":"addMovie", "title":"Indiana Jones and the Temple of Doom"}
 	
 	{"action":"rateMovie", "title":"Star Wars: Episode IV", "rating":"5"}
+
+HAL
+http://stateless.co/hal_specification.html
+Collection+JSON
+http://amundsen.com/media-types/collection/
+JSONAPI.org
+http://jsonapi.org/
