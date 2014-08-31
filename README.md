@@ -1,6 +1,10 @@
 hypermedia-tutorial
 ===================
 
+https://code.tutsplus.com/courses/how-to-build-a-hypermedia-driven-rest-api
+
+https://github.com/tutsplus/hypermedia-driven-REST-API
+
 Code for a Nettuts video series about hypermedia and REST API theory and practice. This example will walk through building a very basic movie API to demonstrate how to take an RPC-style ("RMM Level 0" or "Swamp of POX") API and improve incrementally, explaining concepts of resources, HTTP verbs, and hypermedia along the way.
 
 Note: If you are starting with this tutorial, make sure you do the following after you clone the repo.
