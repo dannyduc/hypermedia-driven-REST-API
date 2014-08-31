@@ -34,3 +34,6 @@ Collection+JSON
 http://amundsen.com/media-types/collection/
 JSONAPI.org
 http://jsonapi.org/
+
+    npm install fortune
+    nodemon fortune.js
