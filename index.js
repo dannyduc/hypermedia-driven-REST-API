@@ -4,8 +4,14 @@ var Datastore = require('nedb');
 var db = {};
 var responder = require('./httpResponder');
 
+var port = process.argv[2] || 3000;
+var root = "http://localhost:" + port;
+
 // Connect to an NeDB database
 db.movies = new Datastore({ filename: 'db/movies', autoload: true});
+
+// Add an index
+db.movies.ensureIndex({ fieldName: 'title', unique: true });
 
 // Necessary for accessing POST data via rea.data object
 app.use(express.bodyParser());
@@ -27,11 +33,34 @@ app.get('/movies', function (req, res) {
 });
 
 app.post('/movies', function (req, res) {
-    db.movies.insert({title: req.body.title}, res.locals.respond);
+    if (!req.body.title) {
+        res.status(400);
+        res.json(400, {error:"A title is required to create a new movie."});
+        return;
+    }
+    db.movies.insert({title: req.body.title}, function (err, created) {
+        if (err) {
+            res.json(500, err);
+            return;
+        }
+        res.set('Location', root + '/movies/' + created._id);
+        res.json(201, created);
+    });
 });
 
 app.get('/movies/:id', function (req, res) {
-    db.movies.findOne({_id: req.params.id}, res.locals.respond);
+    db.movies.findOne({_id: req.params.id}, function (err, result) {
+        if (err) {
+            res.json(500, {error: err});
+            return;
+        }
+        if (!result) {
+            res.json(404, {error: "We did not find a movie with id " + req.params.id});
+            return;
+        }
+
+        res.json(200, result);
+    });
 });
 
 app.put('/movies/:id', function (req, res) {
@@ -44,7 +73,17 @@ app.put('/movies/:id', function (req, res) {
 
 app.delete('/movies/:id', function(req, res) {
     db.movies.remove({_id:req.params.id}, function (err, num) {
-        res.locals.respond(err, {success: num + " record deleted"});
+        if (err) {
+            res.json(500, {error: err});
+            return;
+        }
+        if (num === 0) {
+            res.json(404, {error: "We did not find a movie with id " + req.params.id});
+            return;
+        }
+
+        res.set('Link', root + '/movies; rel="collection"');
+        res.send(204);  // no content
     });
 });
 
@@ -79,4 +118,4 @@ app.post('/rpc', function(req, res) {
                 respond({error:"No action given in request"});
         }
     })
-    .listen(3000);
+    .listen(port);

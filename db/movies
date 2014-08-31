@@ -1,5 +1,8 @@
 {"_id":"4O55drkVOTGAZJ4E"}
 {"title":"Die Hard","_id":"8lsmQq1pqpIgEzcU","rating":"5"}
 {"title":"Indiana Jones and the Temple of Doom","_id":"KCfwORavlyHPzNvK"}
-{"title":"The Life Aquatic with Steve Zissou","_id":"diKLlUbBGWlBvLGO"}
-{"$$deleted":true,"_id":"diKLlUbBGWlBvLGO"}
+{"title":"Die Hard With A Vengence","_id":"YlTnKLM41jv8lPEd"}
+{"$$indexCreated":{"fieldName":"title","unique":true,"sparse":false}}
+{"$$deleted":true,"_id":"YlTnKLM41jv8lPEd"}
+{"title":"Die Hard With A Vengence","_id":"w2IvoDiukJt33Au9"}
+{"$$deleted":true,"_id":"w2IvoDiukJt33Au9"}
